@@ -1,6 +1,8 @@
+// 
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance'; // Use your axiosInstance pointing to Render backend
 
 interface User {
   name: string;
@@ -37,13 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('jwt_token');
+    const storedUser = localStorage.getItem('user_data');
     
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
     
     setLoading(false);
@@ -51,18 +53,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('/api/manager/login', { email, password });
+      const response = await axiosInstance.post('/manager/login', { email, password });
       const { token: newToken, user: userData } = response.data;
       
       setToken(newToken);
       setUser(userData);
       
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(userData));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      localStorage.setItem('jwt_token', newToken);
+      localStorage.setItem('user_data', JSON.stringify(userData));
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
       throw error;
     }
@@ -82,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
 
-      const response = await axios.post('/api/manager/signup', formData, {
+      const response = await axiosInstance.post('/manager/signup', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -93,12 +95,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(newToken);
       setUser(userData);
       
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(userData));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      localStorage.setItem('jwt_token', newToken);
+      localStorage.setItem('user_data', JSON.stringify(userData));
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
       throw error;
     }
@@ -107,9 +109,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('user_data');
+    delete axiosInstance.defaults.headers.common['Authorization'];
     navigate('/login');
   };
 
@@ -122,8 +124,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };
