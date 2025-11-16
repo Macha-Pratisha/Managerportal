@@ -15,30 +15,31 @@
 //   return config;
 // });
 
-
 import axios from "axios";
 
-// Determine base URL depending on environment
-const BASE_URL = import.meta.env.MODE === "development"
-  ? "http://localhost:5000/api" // development
-  : "/api";                     // production (same domain)
+// Backend URL on Render
+const BASE_URL = "https://everydaynewsbackend.onrender.com/api";
 
 // Create axios instance
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true, // include cookies if needed
   headers: {
-    "Content-Type": "application/json", // important
+    "Content-Type": "application/json",
   },
 });
 
 // ------------------ Request interceptor (JWT) ------------------
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("jwt_token"); // your JWT key
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-}, (error) => Promise.reject(error));
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("jwt_token"); // your JWT key
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // ------------------ Response interceptor (optional) ------------------
 axiosInstance.interceptors.response.use(
