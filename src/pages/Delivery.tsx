@@ -1,204 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { Plus, Edit, Trash2, MapPin } from 'lucide-react';
-// import { Button } from '@/components/ui/button';
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from '@/components/ui/dialog';
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from '@/components/ui/table';
-// import { Badge } from '@/components/ui/badge';
-// import { toast } from 'sonner';
-// import axios from 'axios';
-
-// interface DeliveryPerson {
-//   id: string;
-//   name: string;
-//   phone: string;
-//   zone: string;
-//   active: boolean;
-//   totalDeliveries: number;
-//   commission: number;
-// }
-
-// const Delivery = () => {
-//   const [deliveryPersons, setDeliveryPersons] = useState<DeliveryPerson[]>([]);
-//   const [isDialogOpen, setIsDialogOpen] = useState(false);
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     phone: '',
-//     zone: '',
-//   });
-
-//   useEffect(() => {
-//     fetchDeliveryPersons();
-//   }, []);
-
-//   const fetchDeliveryPersons = async () => {
-//     try {
-//       const response = await axios.get('/api/manager/deliveries');
-//       setDeliveryPersons(response.data);
-//     } catch (error) {
-//       console.error('Error fetching delivery persons:', error);
-//     }
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-    
-//     try {
-//       await axios.post('/api/manager/deliveries', formData);
-//       toast.success('Delivery person added successfully');
-//       setIsDialogOpen(false);
-//       setFormData({ name: '', phone: '', zone: '' });
-//       fetchDeliveryPersons();
-//     } catch (error) {
-//       toast.error('Failed to add delivery person');
-//     }
-//   };
-
-//   const handleDelete = async (id: string) => {
-//     if (!confirm('Are you sure you want to remove this delivery person?')) return;
-    
-//     try {
-//       await axios.delete(`/api/manager/deliveries/${id}`);
-//       toast.success('Delivery person removed successfully');
-//       fetchDeliveryPersons();
-//     } catch (error) {
-//       toast.error('Failed to remove delivery person');
-//     }
-//   };
-
-//   return (
-//     <div className="p-8">
-//       <div className="mb-8 flex items-center justify-between">
-//         <div>
-//           <h1 className="page-heading text-blue-800">Delivery Team</h1>
-//           <p className="mt-2 text-muted-foreground">
-//             Manage delivery personnel and routes
-//           </p>
-//         </div>
-//         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-//           <DialogTrigger asChild>
-//             <Button>
-//               <Plus className="mr-2 h-4 w-4" />
-//               Add Delivery Person
-//             </Button>
-//           </DialogTrigger>
-//           <DialogContent>
-//             <DialogHeader>
-//               <DialogTitle>Add New Delivery Person</DialogTitle>
-//             </DialogHeader>
-//             <form onSubmit={handleSubmit} className="space-y-4">
-//               <div className="space-y-2">
-//                 <Label htmlFor="name">Name</Label>
-//                 <Input
-//                   id="name"
-//                   value={formData.name}
-//                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-//                   required
-//                 />
-//               </div>
-//               <div className="space-y-2">
-//                 <Label htmlFor="phone">Phone</Label>
-//                 <Input
-//                   id="phone"
-//                   type="tel"
-//                   value={formData.phone}
-//                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-//                   required
-//                 />
-//               </div>
-//               <div className="space-y-2">
-//                 <Label htmlFor="zone">Delivery Zone</Label>
-//                 <Input
-//                   id="zone"
-//                   value={formData.zone}
-//                   onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
-//                   required
-//                 />
-//               </div>
-//               <Button type="submit" className="w-full">
-//                 Add Delivery Person
-//               </Button>
-//             </form>
-//           </DialogContent>
-//         </Dialog>
-//       </div>
-
-//       <Card className="dashboard-card">
-//         <CardHeader>
-//           <CardTitle className='text-blue-900'>Delivery Team</CardTitle>
-//         </CardHeader>
-//         <CardContent>
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Name</TableHead>
-//                 <TableHead>Phone</TableHead>
-//                 <TableHead>Zone</TableHead>
-//                 <TableHead>Deliveries</TableHead>
-//                 <TableHead>Commission (2.5%)</TableHead>
-//                 <TableHead>Status</TableHead>
-//                 <TableHead className="text-right">Actions</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {deliveryPersons.map((person) => (
-//                 <TableRow key={person.id}>
-//                   <TableCell className="font-medium">{person.name}</TableCell>
-//                   <TableCell>{person.phone}</TableCell>
-//                   <TableCell>
-//                     <div className="flex items-center gap-1">
-//                       <MapPin className="h-4 w-4 text-muted-foreground" />
-//                       {person.zone}
-//                     </div>
-//                   </TableCell>
-//                   <TableCell>{person.totalDeliveries}</TableCell>
-//                   <TableCell>₹{person.commission.toLocaleString()}</TableCell>
-//                   <TableCell>
-//                     <Badge variant={person.active ? 'default' : 'secondary'}>
-//                       {person.active ? 'Active' : 'Inactive'}
-//                     </Badge>
-//                   </TableCell>
-//                   <TableCell className="text-right">
-//                     <div className="flex justify-end gap-2">
-//                       <Button size="sm" variant="outline">
-//                         <Edit className="h-4 w-4" />
-//                       </Button>
-//                       <Button
-//                         size="sm"
-//                         variant="destructive"
-//                         onClick={() => handleDelete(person.id)}
-//                       >
-//                         <Trash2 className="h-4 w-4" />
-//                       </Button>
-//                     </div>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default Delivery;
-
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -222,7 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
 interface DeliveryPerson {
   id: string;
@@ -300,7 +99,7 @@ const Delivery = () => {
 
   const fetchDeliveryPersons = async () => {
     try {
-      const response = await axios.get('/api/manager/deliveries');
+      const response = await axiosInstance.get('/manager/deliveries');
       if (response.data && response.data.length > 0) {
         setDeliveryPersons(response.data);
       } else {
@@ -326,7 +125,7 @@ const Delivery = () => {
     };
 
     try {
-      await axios.post('/api/manager/deliveries', formData);
+      await axiosInstance.post('/manager/deliveries', formData);
       toast.success('Delivery person added successfully');
       setFormData({ name: '', phone: '', zone: '' });
       setIsDialogOpen(false);
@@ -356,7 +155,7 @@ const Delivery = () => {
     if (!selectedPerson) return;
 
     try {
-      await axios.put(`/api/manager/deliveries/${selectedPerson.id}`, formData);
+      await axiosInstance.put(`/manager/deliveries/${selectedPerson.id}`, formData);
       toast.success('Delivery person updated successfully');
       setIsEditDialogOpen(false);
       setSelectedPerson(null);
@@ -377,7 +176,7 @@ const Delivery = () => {
     if (!confirm('Are you sure you want to remove this delivery person?')) return;
 
     try {
-      await axios.delete(`/api/manager/deliveries/${id}`);
+      await axiosInstance.delete(`/manager/deliveries/${id}`);
       toast.success('Delivery person removed successfully');
       fetchDeliveryPersons();
     } catch {

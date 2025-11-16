@@ -1,171 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Button } from '@/components/ui/button';
-// import { Download, FileText } from 'lucide-react';
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from '@/components/ui/table';
-// import { toast } from 'sonner';
-// import axios from 'axios';
-
-// interface BillingRecord {
-//   id: string;
-//   customerName: string;
-//   amount: number;
-//   status: string;
-//   dueDate: string;
-//   invoiceNumber: string;
-// }
-
-// const Billing = () => {
-//   const [billingRecords, setBillingRecords] = useState<BillingRecord[]>([]);
-
-//   useEffect(() => {
-//     fetchBillingRecords();
-//   }, []);
-
-//   const fetchBillingRecords = async () => {
-//     try {
-//       const response = await axios.get('/api/manager/reports');
-//       setBillingRecords(response.data);
-//     } catch (error) {
-//       console.error('Error fetching billing records:', error);
-//     }
-//   };
-
-//   const handleExportPDF = async () => {
-//     try {
-//       toast.success('Exporting report as PDF...');
-//       // Implementation for PDF export
-//     } catch (error) {
-//       toast.error('Failed to export PDF');
-//     }
-//   };
-
-//   const handleExportCSV = async () => {
-//     try {
-//       toast.success('Exporting report as CSV...');
-//       // Implementation for CSV export
-//     } catch (error) {
-//       toast.error('Failed to export CSV');
-//     }
-//   };
-
-//   return (
-//     <div className="p-8">
-//       <div className="mb-8 flex items-center justify-between">
-//         <div>
-//           <h1 className="page-heading">Billing & Reports</h1>
-//           <p className="mt-2 text-muted-foreground">
-//             View billing data and export reports
-//           </p>
-//         </div>
-//         <div className="flex gap-2">
-//           <Button variant="outline" onClick={handleExportPDF}>
-//             <Download className="mr-2 h-4 w-4" />
-//             Export PDF
-//           </Button>
-//           <Button variant="outline" onClick={handleExportCSV}>
-//             <Download className="mr-2 h-4 w-4" />
-//             Export CSV
-//           </Button>
-//         </div>
-//       </div>
-
-//       <div className="mb-8 grid gap-6 sm:grid-cols-3">
-//         <Card className="stat-card">
-//           <CardHeader className="pb-2">
-//             <CardTitle className="text-sm font-medium text-muted-foreground">
-//               Total Revenue
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">₹45,231</div>
-//             <p className="mt-1 text-xs text-muted-foreground">This month</p>
-//           </CardContent>
-//         </Card>
-
-//         <Card className="stat-card">
-//           <CardHeader className="pb-2">
-//             <CardTitle className="text-sm font-medium text-muted-foreground">
-//               Pending Payments
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">₹12,450</div>
-//             <p className="mt-1 text-xs text-muted-foreground">Outstanding</p>
-//           </CardContent>
-//         </Card>
-
-//         <Card className="stat-card">
-//           <CardHeader className="pb-2">
-//             <CardTitle className="text-sm font-medium text-muted-foreground">
-//               Commission Paid
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">₹1,131</div>
-//             <p className="mt-1 text-xs text-muted-foreground">To delivery team</p>
-//           </CardContent>
-//         </Card>
-//       </div>
-
-//       <Card className="dashboard-card">
-//         <CardHeader>
-//           <CardTitle>Billing Records</CardTitle>
-//         </CardHeader>
-//         <CardContent>
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Invoice #</TableHead>
-//                 <TableHead>Customer</TableHead>
-//                 <TableHead>Amount</TableHead>
-//                 <TableHead>Due Date</TableHead>
-//                 <TableHead>Status</TableHead>
-//                 <TableHead className="text-right">Actions</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {billingRecords.map((record) => (
-//                 <TableRow key={record.id}>
-//                   <TableCell className="font-medium">{record.invoiceNumber}</TableCell>
-//                   <TableCell>{record.customerName}</TableCell>
-//                   <TableCell>₹{record.amount}</TableCell>
-//                   <TableCell>{record.dueDate}</TableCell>
-//                   <TableCell>
-//                     <span
-//                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-//                         record.status === 'paid'
-//                           ? 'bg-success-light text-success'
-//                           : 'bg-warning-light text-warning'
-//                       }`}
-//                     >
-//                       {record.status}
-//                     </span>
-//                   </TableCell>
-//                   <TableCell className="text-right">
-//                     <Button size="sm" variant="outline">
-//                       <FileText className="mr-1 h-4 w-4" />
-//                       View
-//                     </Button>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default Billing;
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -180,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
 interface BillingRecord {
   id: string;
@@ -238,7 +70,7 @@ const Billing = () => {
 
   const fetchBillingRecords = async () => {
     try {
-      const response = await axios.get('/api/manager/reports');
+      const response = await axiosInstance.get('/manager/reports');
       if (response.data && response.data.length > 0) {
         const backendRecords = response.data.slice(0, 3);
         setBillingRecords([...backendRecords, ...dummyBillingRecords]);

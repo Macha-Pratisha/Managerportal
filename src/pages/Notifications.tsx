@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
 
 interface Notification {
@@ -34,7 +34,7 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get('/api/manager/notifications');
+      const response = await axiosInstance.get('/manager/notifications');
       setNotifications(response.data);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -43,7 +43,7 @@ const Notifications = () => {
 
   const markAsRead = async (id: string) => {
     try {
-      await axios.post(`/api/manager/notifications/${id}/read`);
+      await axiosInstance.post(`/manager/notifications/${id}/read`);
       // Remove the notification from the list immediately
       setNotifications((prev) => prev.filter((n) => n._id !== id));
       toast.success('Notification marked as read');
@@ -63,7 +63,7 @@ const Notifications = () => {
 
   try {
     // ✅ create new note for customers
-    await axios.post("/api/notes", { message: replyMessage });
+    await axiosInstance.post("/notes", { message: replyMessage });
     toast.success("Reply sent successfully and visible to customers!");
     setReplyMessage("");
     setReplyDialogOpen(false);

@@ -1,165 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Button } from '@/components/ui/button';
-// import { Badge } from '@/components/ui/badge';
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from '@/components/ui/table';
-// import { CheckCircle, XCircle } from 'lucide-react';
-// import { toast } from 'sonner';
-// import axios from 'axios';
-
-// interface Customer {
-//   id: string;
-//   name: string;
-//   email: string;
-//   phone: string;
-//   address: string;
-//   status: 'pending' | 'approved' | 'rejected';
-//   subscriptionType: string;
-//   deliveryPersonId?: string;
-// }
-
-// const Customers = () => {
-//   const [customers, setCustomers] = useState<Customer[]>([]);
-//   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
-
-//   useEffect(() => {
-//     fetchCustomers();
-//   }, [filter]);
-
-//   const fetchCustomers = async () => {
-//     try {
-//       const response = await axios.get('/api/manager/customers', {
-//         params: { status: filter !== 'all' ? filter : undefined },
-//       });
-//       setCustomers(response.data);
-//     } catch (error) {
-//       console.error('Error fetching customers:', error);
-//     }
-//   };
-
-//   const handleApprove = async (customerId: string) => {
-//     try {
-//       await axios.post(`/api/manager/customers/${customerId}/approve`);
-//       toast.success('Customer approved successfully');
-//       fetchCustomers();
-//     } catch (error) {
-//       toast.error('Failed to approve customer');
-//     }
-//   };
-
-//   const handleReject = async (customerId: string) => {
-//     try {
-//       await axios.post(`/api/manager/customers/${customerId}/reject`);
-//       toast.success('Customer rejected');
-//       fetchCustomers();
-//     } catch (error) {
-//       toast.error('Failed to reject customer');
-//     }
-//   };
-
-//   const filteredCustomers = customers.filter(
-//     (customer) => filter === 'all' || customer.status === filter
-//   );
-
-//   return (
-//     <div className="p-8">
-//       <div className="mb-8">
-//         <h1 className="page-heading">Customer Management</h1>
-//         <p className="mt-2 text-muted-foreground">
-//           Manage customer subscriptions and approvals
-//         </p>
-//       </div>
-
-//       <div className="mb-6 flex gap-2">
-//         {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
-//           <Button
-//             key={status}
-//             variant={filter === status ? 'default' : 'outline'}
-//             onClick={() => setFilter(status)}
-//           >
-//             {status.charAt(0).toUpperCase() + status.slice(1)}
-//           </Button>
-//         ))}
-//       </div>
-
-//       <Card className="dashboard-card">
-//         <CardHeader>
-//           <CardTitle>Customer List</CardTitle>
-//         </CardHeader>
-//         <CardContent>
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Name</TableHead>
-//                 <TableHead>Email</TableHead>
-//                 <TableHead>Phone</TableHead>
-//                 <TableHead>Subscription</TableHead>
-//                 <TableHead>Status</TableHead>
-//                 <TableHead className="text-right">Actions</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {filteredCustomers.map((customer) => (
-//                 <TableRow key={customer.id}>
-//                   <TableCell className="font-medium">{customer.name}</TableCell>
-//                   <TableCell>{customer.email}</TableCell>
-//                   <TableCell>{customer.phone}</TableCell>
-//                   <TableCell>{customer.subscriptionType}</TableCell>
-//                   <TableCell>
-//                     <Badge
-//                       variant={
-//                         customer.status === 'approved'
-//                           ? 'default'
-//                           : customer.status === 'pending'
-//                           ? 'secondary'
-//                           : 'destructive'
-//                       }
-//                     >
-//                       {customer.status}
-//                     </Badge>
-//                   </TableCell>
-//                   <TableCell className="text-right">
-//                     {customer.status === 'pending' && (
-//                       <div className="flex justify-end gap-2">
-//                         <Button
-//                           size="sm"
-//                           variant="default"
-//                           onClick={() => handleApprove(customer.id)}
-//                         >
-//                           <CheckCircle className="mr-1 h-4 w-4" />
-//                           Approve
-//                         </Button>
-//                         <Button
-//                           size="sm"
-//                           variant="destructive"
-//                           onClick={() => handleReject(customer.id)}
-//                         >
-//                           <XCircle className="mr-1 h-4 w-4" />
-//                           Reject
-//                         </Button>
-//                       </div>
-//                     )}
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default Customers;
-
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -174,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
 interface Customer {
   id: string;
@@ -310,7 +148,7 @@ const Customers = () => {
   const fetchCustomers = async () => {
     try {
       // ✅ Fetch from backend (only 3)
-      const response = await axios.get('/api/manager/customers', {
+      const response = await axiosInstance.get('/manager/customers', {
         params: { status: filter !== 'all' ? filter : undefined },
       });
 
@@ -328,7 +166,7 @@ const Customers = () => {
 
   const handleApprove = async (customerId: string) => {
     try {
-      await axios.post(`/api/manager/customers/${customerId}/approve`);
+      await axiosInstance.post(`/manager/customers/${customerId}/approve`);
       toast.success('Customer approved successfully');
       fetchCustomers();
     } catch (error) {
@@ -338,7 +176,7 @@ const Customers = () => {
 
   const handleReject = async (customerId: string) => {
     try {
-      await axios.post(`/api/manager/customers/${customerId}/reject`);
+      await axiosInstance.post(`/manager/customers/${customerId}/reject`);
       toast.success('Customer rejected');
       fetchCustomers();
     } catch (error) {
