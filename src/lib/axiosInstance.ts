@@ -44,12 +44,59 @@
 // export default axiosInstance;
 
 
+// import axios from "axios";
+
+// // Determine backend URL depending on environment
+// const BASE_URL =
+//   import.meta.env.MODE === "development"
+//     ? "http://localhost:5000/api" // local backend
+//     : "https://everydaynewsbackend.onrender.com/api"; // Render backend
+
+// // Create axios instance
+// export const axiosInstance = axios.create({
+//   baseURL: BASE_URL,
+//   withCredentials: true, // include cookies if backend uses them
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+
+// // ------------------ Request interceptor (JWT) ------------------
+// axiosInstance.interceptors.request.use(
+//   (config) => {
+//     // Get JWT token from localStorage
+//     const token = localStorage.getItem("jwt_token");
+//     if (token && config.headers) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// // ------------------ Response interceptor (Auth errors) ------------------
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       // Clear storage and redirect to login
+//       localStorage.removeItem("jwt_token");
+//       localStorage.removeItem("user_data");
+//       window.location.href = "/login";
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
+// export default axiosInstance;
+
+
 import axios from "axios";
 
 // Determine backend URL depending on environment
 const BASE_URL =
   import.meta.env.MODE === "development"
-    ? "http://localhost:5000/api" // local backend
+    ? "http://localhost:5000/api" // local development
     : "https://everydaynewsbackend.onrender.com/api"; // Render backend
 
 // Create axios instance
@@ -61,11 +108,11 @@ export const axiosInstance = axios.create({
   },
 });
 
-// ------------------ Request interceptor (JWT) ------------------
+// ------------------ Request interceptor ------------------
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Get JWT token from localStorage
-    const token = localStorage.getItem("jwt_token");
+    // Get token from localStorage (optional)
+    const token = localStorage.getItem("jwt_token"); 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -74,7 +121,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ------------------ Response interceptor (Auth errors) ------------------
+// ------------------ Response interceptor ------------------
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
