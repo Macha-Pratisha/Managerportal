@@ -1,24 +1,11 @@
-// import axios from "axios";
-
-// export const axiosInstance = axios.create({
-//   baseURL: "http://localhost:5000/api",
-//   headers: {
-//     "Content-Type": "application/json", // ✅ important
-//   },
-// });
-
-// axiosInstance.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("jwt_token"); 
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
 
 import axios from "axios";
 
-// Backend URL on Render
-const BASE_URL = "https://everydaynewsbackend.onrender.com/api";
+// Determine backend URL
+const BASE_URL = import.meta.env.VITE_API_URL
+  || (import.meta.env.MODE === "development"
+      ? "http://localhost:5000/api"           // local dev backend
+      : "https://everydaynewsbackend.onrender.com/api"); // Render backend
 
 // Create axios instance
 export const axiosInstance = axios.create({
@@ -32,7 +19,7 @@ export const axiosInstance = axios.create({
 // ------------------ Request interceptor (JWT) ------------------
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwt_token"); // your JWT key
+    const token = localStorage.getItem("jwt_token"); // JWT key for manager portal
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -41,7 +28,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ------------------ Response interceptor (optional) ------------------
+// ------------------ Response interceptor (Auth errors) ------------------
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
