@@ -50,7 +50,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await fetch('/api/manager/notifications');
+        const res = await fetch('https://everydaynewsbackend.onrender.com/api/manager/notifications');
         const data = await res.json();
 
         const backendNotifications = (data || []).slice(0, 3).map((n: any) => ({
