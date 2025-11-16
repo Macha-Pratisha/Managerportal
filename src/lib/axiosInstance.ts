@@ -24,9 +24,8 @@ import axios from "axios";
 // Determine backend URL depending on environment
 const BASE_URL =
   import.meta.env.MODE === "development"
-    ? "http://localhost:5000/api"             // Local development
-    : "https://everydaynewsbackend.onrender.com/api"; // Render backend
-
+    ? "http://localhost:5000/api"
+    : "https://everydaynewsbackend.onrender.com/api";
 // Create axios instance
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
